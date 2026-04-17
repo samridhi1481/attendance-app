@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+
+<link rel="stylesheet" href="style.css">
+
+<h2>Login</h2>
+
+<input type="text" id="email" placeholder="Email">
+<input type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+
+<script>
+function login() {
+  const email = document.getElementById("email").value;
+
+  if (!email) {
+    alert("Enter email ❌");
+    return;
+  }
+
+  localStorage.setItem("userEmail", email);
+  window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>

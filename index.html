@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Login</h2>
+
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+
+  <hr>
+
+  <button onclick="markAttendance()">Mark Attendance</button>
+  <hr>
+  <button onclick="toggleAttendance()">Teacher Toggle</button>
+  <div id="data"></div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
