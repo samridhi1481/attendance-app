@@ -2,23 +2,23 @@
 <html>
 <head>
   <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<link rel="stylesheet" href="style.css">
+
 <h1>Student Dashboard</h1>
 
 <div class="card">
   <button onclick="logout()">Logout</button>
-  <script src="app.js"></script>
-  <button class="mark-btn" onclick="markAttendance()">Mark Attendance</button>
-  <button class="toggle-btn" onclick="toggleAttendance()">Teacher Toggle</button>
+  <button onclick="markAttendance()">Mark Attendance</button>
+  <button onclick="toggleAttendance()">Teacher Toggle</button>
 </div>
 
 <div class="card">
   <h2 id="name">Loading...</h2>
-  <p id="attendance"></p>
-  <p id="total"></p>
-  <p id="percent"></p>
+  <p id="attendance">Attendance: 0</p>
+  <p id="total">Total Classes: 0</p>
+  <p id="percent">Percentage: 0%</p>
 </div>
 
 <script type="module" src="dashboard.js"></script>

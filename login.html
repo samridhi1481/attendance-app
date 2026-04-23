@@ -2,15 +2,13 @@
 <html>
 <head>
   <title>Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<link rel="stylesheet" href="style.css">
-
 <h2>Login</h2>
 
-<input type="text" id="email" placeholder="Email">
-<input type="password" placeholder="Password">
+<input type="text" id="email" placeholder="Enter Email">
 <button onclick="login()">Login</button>
 
 <script>
@@ -23,6 +21,8 @@ function login() {
   }
 
   localStorage.setItem("userEmail", email);
+  localStorage.setItem("codeVerified", true); // skip code page
+
   window.location.href = "dashboard.html";
 }
 </script>

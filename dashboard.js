@@ -10,11 +10,11 @@ import {
 
 // 🔐 Protect page
 if (!localStorage.getItem("codeVerified")) {
-  window.location.href = "code.html";
+  window.location.href = "login.html";
 }
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA573c_VwuMo3owaD8bkwoXOLKzr3lJhVA",
+  apiKey: "YOUR_API_KEY",
   authDomain: "attendance-system-7f3cd.firebaseapp.com",
   projectId: "attendance-system-7f3cd",
   storageBucket: "attendance-system-7f3cd.firebasestorage.app",
@@ -25,9 +25,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ LOAD STUDENT (FIXED)
+// ✅ LOAD STUDENT
 async function loadStudent() {
-  const email = localStorage.getItem("userEmail");
+  let email = localStorage.getItem("userEmail");
 
   if (!email) {
     alert("Login required");
@@ -35,67 +35,65 @@ async function loadStudent() {
     return;
   }
 
-  const studentsRef = collection(db, "students");
-  const snapshot = await getDocs(studentsRef);
+  email = email.trim().toLowerCase();
 
-  let studentData = null;
+  const snapshot = await getDocs(collection(db, "students"));
 
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
 
     if (
       data.email &&
-      data.email.trim().toLowerCase() === email.trim().toLowerCase()
+      data.email.trim().toLowerCase() === email
     ) {
-      studentData = data;
+      document.getElementById("name").innerText = data.name;
+      document.getElementById("attendance").innerText =
+        "Attendance: " + data.attendance;
+      document.getElementById("total").innerText =
+        "Total Classes: " + data.totalClasses;
+
+      const percent =
+        (data.attendance / data.totalClasses) * 100;
+
+      document.getElementById("percent").innerText =
+        "Percentage: " + percent.toFixed(2) + "%";
     }
   });
+}
 
-  if (!studentData) {
-    alert("Student not found ❌");
+// ✅ MARK ATTENDANCE (ONLY IF OPEN)
+window.markAttendance = async function () {
+  const ref = doc(db, "settings", "attendanceControl");
+  const snap = await getDoc(ref);
+
+  if (!snap.exists() || !snap.data().isAttendanceOpen) {
+    alert("Attendance is CLOSED ❌");
     return;
   }
 
-  // ✅ SHOW DATA
-  document.getElementById("name").innerText =
-    studentData.name || "No Name";
+  let email = localStorage.getItem("userEmail");
+  email = email.trim().toLowerCase();
 
-  document.getElementById("attendance").innerText =
-    "Attendance: " + (studentData.attendance || 0);
-
-  document.getElementById("total").innerText =
-    "Total Classes: " + (studentData.totalClasses || 0);
-
-  const percent =
-    ((studentData.attendance || 0) /
-      (studentData.totalClasses || 1)) * 100;
-
-  document.getElementById("percent").innerText =
-    "Percentage: " + percent.toFixed(2) + "%";
-}
-
-// ✅ MARK ATTENDANCE
-window.markAttendance = async function () {
-  const email = localStorage.getItem("userEmail");
-
-  const studentsRef = collection(db, "students");
-  const snapshot = await getDocs(studentsRef);
+  const snapshot = await getDocs(collection(db, "students"));
 
   snapshot.forEach(async (docSnap) => {
     const data = docSnap.data();
 
-    if (data.email === email) {
+    if (
+      data.email &&
+      data.email.trim().toLowerCase() === email
+    ) {
       await updateDoc(doc(db, "students", docSnap.id), {
         attendance: (data.attendance || 0) + 1
       });
-
-      alert("Attendance marked ✅");
-      loadStudent();
     }
   });
+
+  alert("Attendance marked ✅");
+  loadStudent();
 };
 
-// ✅ TOGGLE ATTENDANCE
+// ✅ TEACHER TOGGLE
 window.toggleAttendance = async function () {
   const ref = doc(db, "settings", "attendanceControl");
   const snap = await getDoc(ref);
@@ -103,8 +101,7 @@ window.toggleAttendance = async function () {
   const current = snap.data().isAttendanceOpen;
 
   if (!current) {
-    const studentsRef = collection(db, "students");
-    const snapshot = await getDocs(studentsRef);
+    const snapshot = await getDocs(collection(db, "students"));
 
     snapshot.forEach(async (docSnap) => {
       const data = docSnap.data();
@@ -122,5 +119,11 @@ window.toggleAttendance = async function () {
   alert("Attendance is now " + (!current ? "OPEN ✅" : "CLOSED ❌"));
 };
 
-// 🚀 LOAD ON START
+// ✅ LOGOUT
+window.logout = function () {
+  localStorage.clear();
+  window.location.href = "login.html";
+};
+
+// 🚀 START
 loadStudent();
